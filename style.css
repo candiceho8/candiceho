@@ -1,6 +1,8 @@
 body {
     text-align: center;
     background-image: url(flowers.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     background-size: cover;
     font-family: "Goudy Old Style", Garamond, "Big Caslon", "Times New Roman", serif;
     border-top: 100px;
