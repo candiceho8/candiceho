@@ -20,6 +20,7 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(reshape2)
 ```
 
 I decided to obtain the data by downloading the file directly off of the website. Since it is a csv file, we will use read_csv to store the data in a dataframe. We type the name of the dataframe to display it. It looks like this dataset is already tidy, so we will not have to tidy it ourselves. We can move onto Data Processing.
@@ -78,36 +79,37 @@ average_HP <- pokemon %>%
 average_HP
 ```
 
-We can produce the same kind of plot with a different stat also, such as Defense. From this graph, we can see that Generation 1 still has the lowest average defense, and Generation 4 has the highest. However, Generation 5 looks like it has a comparitavely lower average defense than it did average HP.
+Based on this chart, it looks like the Pokemon in Generation 4 had the highest average HP, while Generation 1 had the lowest. We can also do this for other stats such as Attack, Defense, and all the others! We can produce the same kind of plot with mean Defense instead of HP. 
 ```{r}
 average_def <- pokemon %>%
   select(Defense, Generation) %>%
   group_by(Generation) %>%
-  summarize(mean_HP = mean(Defense)) %>%
-  ggplot(aes(x=Generation, y=mean_HP, fill=Generation)) + geom_bar(stat="identity")+ 
+  summarize(mean_def = mean(Defense)) %>%
+  ggplot(aes(x=factor(Generation), y=mean_def, fill=Generation)) + geom_bar(stat="identity")+ 
   labs(title="Average Defense for each Generation",
          x = "Generation",
          y = "Average Defense")
 average_def
 ```
 
-Based on this chart, it looks like the Pokemon in Generation 4 had the highest average HP, while Generation 1 had the lowest. We can also do this for other stats such as Attack, Defense, and all the others! We can produce the same kind of plot with mean Defense instead of HP. From this graph, we can see that Generation 1 still has the lowest average defense, and Generation 4 has the highest. However, Generation 5 looks like it has a comparitavely lower average defense than it did average HP.
+From this graph, we can see that Generation 1 still has the lowest average defense, and Generation 4 has the highest. However, Generation 5 looks like it has a comparitavely lower average defense than it did average HP.
+
+What if we wanted to see compare the stats of every stat in every Generation? First we will make a dataframe of all the average stats for each Generation.
 ```{r}
-average_def <- pokemon %>%
-  select(Defense, Generation) %>%
+avg_gen_stats <- pokemon %>%
   group_by(Generation) %>%
-  summarize(mean_HP = mean(Defense)) %>%
-  ggplot(aes(x=Generation, y=mean_HP, fill=Generation)) + geom_bar(stat="identity")+ 
-  labs(title="Average Defense for each Generation",
+  summarize(mean_Total = mean(Total),mean_HP = mean(HP),mean_Atk = mean(Attack), mean_Def = mean(Defense), mean_SpAtk=mean(`Sp. Atk`), mean_SpDef = mean(`Sp. Def`), mean_Speed = mean(Speed) )
+
+ags_mod<-melt(avg_gen_stats[,c('Generation','mean_HP', 'mean_Def', 'mean_SpAtk', 'mean_SpDef')],id.vars=1) %>%
+  ggplot(aes(x=factor(Generation), y=value, width=.75)) + 
+  geom_bar(aes(fill=variable), stat='identity', position='dodge')+
+  labs(title="Average Stats by Generation",
          x = "Generation",
-         y = "Average Defense")
-average_def
+         y = "Average Stats")
+ags_mod
 ```
 
-What if we wanted to see compare the stats of every stat in every Generation?
-```{r}
-
-```
+There are other ways to do this in R, but this is one of them.
 
 We will now move onto Hypothesis Testing.
 
