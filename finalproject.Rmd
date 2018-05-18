@@ -77,7 +77,10 @@ average_HP <- pokemon %>%
          y = "Average HP")
 average_HP
 ```
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2c2497618aa37f439e9c7cf910446b1fe2b540b9
 We can produce the same kind of plot with a different stat also, such as Defense. From this graph, we can see that Generation 1 still has the lowest average defense, and Generation 4 has the highest. However, Generation 5 looks like it has a comparitavely lower average defense than it did average HP.
 ```{r}
 average_def <- pokemon %>%
@@ -91,7 +94,24 @@ average_def <- pokemon %>%
 average_def
 ```
 
+<<<<<<< HEAD
 Based on this chart, it looks like the Pokemon in Generation 4 had the highest average HP, while Generation 1 had the lowest. We can also do this for other stats such as Attack, Defense, and all the others! What if we wanted to see compare the stats of every stat in every Generation?
+=======
+Based on this chart, it looks like the Pokemon in Generation 4 had the highest average HP, while Generation 1 had the lowest. We can also do this for other stats such as Attack, Defense, and all the others! We can produce the same kind of plot with mean Defense instead of HP. From this graph, we can see that Generation 1 still has the lowest average defense, and Generation 4 has the highest. However, Generation 5 looks like it has a comparitavely lower average defense than it did average HP.
+```{r}
+average_def <- pokemon %>%
+  select(Defense, Generation) %>%
+  group_by(Generation) %>%
+  summarize(mean_HP = mean(Defense)) %>%
+  ggplot(aes(x=Generation, y=mean_HP, fill=Generation)) + geom_bar(stat="identity")+ 
+  labs(title="Average Defense for each Generation",
+         x = "Generation",
+         y = "Average Defense")
+average_def
+```
+
+What if we wanted to see compare the stats of every stat in every Generation?
+>>>>>>> 2c2497618aa37f439e9c7cf910446b1fe2b540b9
 ```{r}
 
 ```
@@ -101,6 +121,3 @@ We will now move onto Hypothesis Testing.
 ## Hypothesis Testing
 
 ## Machine Learning
-
-
- 
