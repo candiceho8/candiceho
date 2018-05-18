@@ -1,2 +1,2 @@
 # candiceho8.github.io
-Personal Website
+320 Final Project: Pokemon
