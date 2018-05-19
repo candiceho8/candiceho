@@ -21,15 +21,20 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(reshape2)
+library(broom)
 ```
 
 I decided to obtain the data by downloading the file directly off of the website. Since it is a csv file, we will use read_csv to store the data in a dataframe. We type the name of the dataframe to display it. It looks like this dataset is already tidy, so we will not have to tidy it ourselves. We can move onto Data Processing.
-```{r}
+```{r }
 pokemon <- read_csv("~/UMD/Senior/Spring2018/CMSC320/FinalProject/Pokemon.csv")
-head(pokemon)
+pokemon
+
 ```
 
-## Data Collection
+If you do not have experience with Pokemon, this is what a Pokemon would look like with its stats.
+![](/Users/Candice Ho/Documents/UMD/Senior/Spring2018/CMSC320/FinalProject/PokemonStats.jpg)
+
+## Data Processing
 
 Now we have our data. If we wanted to filter our data, we can use filter to filter our dataframe. We can filter out your favorite Pokemon by their name.
 ```{r}
@@ -67,7 +72,30 @@ Now that we know the basics of collecting data, we can move on to plotting our d
 We have finished scrapping, tidying, and collecting the data. We will now see if we can plot our data and see if we can observe any trends.
 Many Pokemon players rave over what kind of Pokemon the next generation will have. Every generation provides players with a different set of Pokemon they can use to build a strong team.
 
-I would like to look at trends over different generations, to see if we can find any notable trends. Let's first start of with finding the mean HP of every generation, and comparing those.
+I would like to look at trends over different generations, to see if we can find any notable trends. Let's first start of with seeing how many Pokmeon there are for each Type.
+```{r}
+num_types <- pokemon %>%
+  group_by(pokemon$`Type 1`, pokemon$`Type 2`) %>% 
+  tally()
+num_types
+```
+
+We can see that there are many different combinations of Pokemon from just Normal Pokemon to Dragon, Water Pokemon and Ground,Psychic Pokemon. To make a more easily readable plot, I will plot only Type 1.
+```{r}
+type1 <- pokemon %>%
+  group_by(pokemon$`Type 1`) %>%
+  tally() %>%
+  rename(Type = "pokemon$`Type 1`") %>%
+  ggplot(aes(x=Type, y=n, fill=Type)) + geom_bar(stat="identity")+ 
+  labs(title="Quantity of Types of Pokemon",
+         x = "Type",
+         y = "Quantity")
+type1
+```
+
+Based off this graph, we can see that there are an overwhelming number of Water Pokemon, closely followed by Normal type Pokemon. There are very little Flying type Pokemon, but based on personal knowledge, many pokemon that can fly do not necessarily have to be Flying type Pokemon.
+
+Now, let's finding the mean HP of every generation, and comparing those.
 ```{r}
 average_HP <- pokemon %>%
   select(HP, Generation) %>%
@@ -138,8 +166,50 @@ Now that we have explored some interesting bar charts, we will be moving onto so
 
 In Pokemon, there are three starter Pokemon in every game. There is always a different set of three Pokemon, but there is always one Fire type, one Water type, and one Grass type. Instead of looking at every type of Pokemon in the game, I will be focusing on these three for this reason. I will be looking at the relationship between  My null hypothesis is that there is no statistical significance between a Fire, Water, and Grass Pokemon's Attack and Defense. 
 
-This would be a useful hypothesis to find more about because we expect that Pokemon are well rounded. For example, if a Pokemon has really high Attack, it should have lower Defense. It would seem like the Pokemon is overpowered if it had both high Defense and Attack. So far, we have only been plotting bar plots, so this will be a good change. We will now be plotting scatter plots.
+This would be a useful hypothesis to find more about because we expect that Pokemon are well rounded. For example, if a Pokemon has really high Attack, it should have lower Defense. It would seem like the Pokemon is overpowered if it had both high Defense and Attack. So far, we have only been plotting bar plots, so this will be a good change. We will now be plotting scatter plots, and then making linear regression models.
 
-I will now be using a linear regression model to
+```{r}
+water <- pokemon %>%
+  filter(pokemon$`Type 1`=='Water') %>%
+  ggplot(aes(x=Attack, y=Defense)) + 
+  geom_point() + geom_smooth(method = 'lm') +
+  labs(title="Attack vs Defense for Water Type Pokemon",
+         x = "Attack",
+         y = "Defense")
+water
+```
+```{r}
+fire <- pokemon %>%
+  filter(pokemon$`Type 1`=='Fire') %>%
+  ggplot(aes(x=Attack, y=Defense)) + 
+  geom_point() + geom_smooth(method = 'lm') +
+  labs(title="Attack vs Defense for Fire Type Pokemon",
+         x = "Attack",
+         y = "Defense")
+fire
+```
+```{r}
+grass <- pokemon %>%
+  filter(pokemon$`Type 1`=='Grass') %>%
+  ggplot(aes(x=Attack, y=Defense)) + 
+  geom_point() + geom_smooth(method = 'lm') +
+  labs(title="Attack vs Defense for Grass Type Pokemon",
+         x = "Attack",
+         y = "Defense")
+grass
+```
+
+We can observe from the three plots of Water, Fire, and Grass there there are positive trends in all of them. In the plot for water Pokemon, the slope of the regression line is the most flat out of the three. There are a few outliers where the Attack is around average and the Defense is extremely high, but most of the other points fit the line. In the fire plot, there are outliers throughout. For example, there is a Pokemon with one of the lowest Attack stats, but one of the highest Defense stats. In the
+
+Now we will find more statistical data using tidy, from the library(broom). We need this data to determine whether to reject or accept the null hypothesis.
+```{r}
+AtkDef_res <- lm(Attack~Defense, data=pokemon)
+AtkDef_res_tidy <- AtkDef_res %>% tidy()
+AtkDef_res_tidy
+```
+
+The p-values are extremely smaall, and below 0.05, so we reject the null hypothesis. This means that there is significance between Attack and Defense.
+
+I hope you enjoyed this tutorial, and it gave you some insight on the Pokemon games you're playing!
 
 ![](/Users/Candice Ho/Documents/UMD/Senior/Spring2018/CMSC320/FinalProject/PokemonEnd.jpg)
