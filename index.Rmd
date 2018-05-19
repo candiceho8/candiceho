@@ -134,10 +134,12 @@ From observing this plot, we can clearly see that there are Types that have cert
 
 Now that we have explored some interesting bar charts, we will be moving onto something new! Let's get into Hypothesis Testing.
 
-## Hypothesis Testing
+## Hypothesis Testing & Machine Learning
 
-In Pokemon, there are three starter Pokemon in every game. There is always a different set of three Pokemon, but there is always one Fire type, one Water type, and one Grass type. Instead of looking at every type of Pokemon in the game, I will be focusing on these three for this reason. My null hypothesis is that there is no significant change . So far, we have only been plotting bar plots, so this will be a good change. We will now be plotting scatter plots.
+In Pokemon, there are three starter Pokemon in every game. There is always a different set of three Pokemon, but there is always one Fire type, one Water type, and one Grass type. Instead of looking at every type of Pokemon in the game, I will be focusing on these three for this reason. I will be looking at the relationship between  My null hypothesis is that there is no statistical significance between a Fire, Water, and Grass Pokemon's Attack and Defense. 
 
-## Machine Learning
+This would be a useful hypothesis to find more about because we expect that Pokemon are well rounded. For example, if a Pokemon has really high Attack, it should have lower Defense. It would seem like the Pokemon is overpowered if it had both high Defense and Attack. So far, we have only been plotting bar plots, so this will be a good change. We will now be plotting scatter plots.
 
 I will now be using a linear regression model to
+
+![](/Users/Candice Ho/Documents/UMD/Senior/Spring2018/CMSC320/FinalProject/PokemonEnd.jpg)
