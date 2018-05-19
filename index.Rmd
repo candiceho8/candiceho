@@ -65,8 +65,9 @@ Now that we know the basics of collecting data, we can move on to plotting our d
 ## Exploratory Data Analysis
 
 We have finished scrapping, tidying, and collecting the data. We will now see if we can plot our data and see if we can observe any trends.
+Many Pokemon players rave over what kind of Pokemon the next generation will have. Every generation provides players with a different set of Pokemon they can use to build a strong team.
 
-Many Pokemon players rave over what kind of Pokemon the next generation will have. Every generation provides players with a different set of Pokemon they can use to build a strong team. I would like to look at trends over different generations, to see if we can find any notable trends. Let's first start of with finding the mean HP of every generation, and comparing those.
+I would like to look at trends over different generations, to see if we can find any notable trends. Let's first start of with finding the mean HP of every generation, and comparing those.
 ```{r}
 average_HP <- pokemon %>%
   select(HP, Generation) %>%
@@ -94,25 +95,49 @@ average_def
 
 From this graph, we can see that Generation 1 still has the lowest average defense, and Generation 4 has the highest. However, Generation 5 looks like it has a comparitavely lower average defense than it did average HP.
 
-What if we wanted to see compare the stats of every stat in every Generation? First we will make a dataframe of all the average stats for each Generation.
+What if we wanted to see compare the stats of every stat in every Generation? To make things easier to compare, it may be better if we have everything in one plot. First we will make a dataframe of all the average stats for each Generation.This dataframe will help us make a grouped bar plot of the average stats by generation.
 ```{r}
 avg_gen_stats <- pokemon %>%
   group_by(Generation) %>%
   summarize(mean_Total = mean(Total),mean_HP = mean(HP),mean_Atk = mean(Attack), mean_Def = mean(Defense), mean_SpAtk=mean(`Sp. Atk`), mean_SpDef = mean(`Sp. Def`), mean_Speed = mean(Speed) )
 
-ags_mod<-melt(avg_gen_stats[,c('Generation','mean_HP', 'mean_Def', 'mean_SpAtk', 'mean_SpDef')],id.vars=1) %>%
+ags_mod <- melt(avg_gen_stats[,c('Generation','mean_HP', 'mean_Def', 'mean_Atk', 'mean_Def', 'mean_SpAtk', 'mean_SpDef', 'mean_Speed')],id.vars=1) %>%
+  rename(Stats = variable) %>%
   ggplot(aes(x=factor(Generation), y=value, width=.75)) + 
-  geom_bar(aes(fill=variable), stat='identity', position='dodge')+
+  geom_bar(aes(fill=Stats), stat='identity', position='dodge')+
   labs(title="Average Stats by Generation",
          x = "Generation",
          y = "Average Stats")
 ags_mod
 ```
 
-There are other ways to do this in R, but this is one of them.
+There are other ways to do this in R, but this is one of them. Looking at this chart, we can see that there is a subtle increase in all stats from Generation 1 to Generation 5. Many players also wonder if certain types of Pokemon tend to have certain stats that are higher due to their attributes. For example, people wonder if most Rock and Steel Pokemon will have higher Defense and Special Defense because of their hard exterior. We will be ignoring Type 2 since many Pokemon are only one type. If a Pokemon is two types, usually the primary one is first. We can make a plot this and see, but it will be a lot since there are many different types. Notice that although the information is completely different, the way we plot is similar.
+```{r}
+avg_type_stats <- pokemon %>%
+  group_by(pokemon$`Type 1`) %>%
+  summarize(mean_Total = mean(Total),mean_HP = mean(HP),mean_Atk = mean(Attack), mean_Def = mean(Defense),
+            mean_SpAtk=mean(`Sp. Atk`), mean_SpDef = mean(`Sp. Def`), mean_Speed = mean(Speed) ) %>%
+  rename(Type = "pokemon$`Type 1`")
 
-We will now move onto Hypothesis Testing.
+ats_mod <- melt(avg_type_stats[,c('Type','mean_HP', 'mean_Def', 'mean_Atk', 'mean_SpAtk', 'mean_SpDef', 'mean_Speed')],id.vars=1) %>%
+  rename(Stats = variable) %>%
+  ggplot(aes(x=Stats, y=value, width=.75)) + 
+  geom_bar(aes(fill=Type), stat='identity', position='dodge')+
+  labs(title="Average Stats by Type",
+         x = "Stats",
+         y = "Average Stats")
+
+ats_mod
+```
+
+From observing this plot, we can clearly see that there are Types that have certain stats that tend to be higher. For example, my prediction about Steel and Rock Pokemon having the highest overall defense was correct. A few other things that we can observe is that Dragon type Pokemon seem to have above average overall stats for all. Flying type Pokemon are usually have the most Speed, and Psychich type Pokemon look like they have the highest Special Attack.
+
+Now that we have explored some interesting bar charts, we will be moving onto something new! Let's get into Hypothesis Testing.
 
 ## Hypothesis Testing
 
+In Pokemon, there are three starter Pokemon in every game. There is always a different set of three Pokemon, but there is always one Fire type, one Water type, and one Grass type. Instead of looking at every type of Pokemon in the game, I will be focusing on these three for this reason. My null hypothesis is that there is no significant change . So far, we have only been plotting bar plots, so this will be a good change. We will now be plotting scatter plots.
+
 ## Machine Learning
+
+I will now be using a linear regression model to
